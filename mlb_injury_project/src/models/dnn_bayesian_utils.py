@@ -1,5 +1,5 @@
 """
-02_dnn_bayesian.py와 export_dnn_bayesian_results.py가 공유하는 모델/데이터 유틸.
+02_dnn_bayesian.py와 02_export_dnn_results.py가 공유하는 모델/데이터 유틸.
 02_dnn_bayesian.py는 파일명이 숫자로 시작해서 `import 02_dnn_bayesian`이 안 되기
 때문에(파이썬 모듈명 규칙 위반), 재사용할 부분을 이 파일로 따로 뺐다.
 *** GPU/torch가 설치된 별도 가상환경에서 실행할 것 ***

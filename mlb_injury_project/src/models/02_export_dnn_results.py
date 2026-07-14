@@ -1,59 +1,34 @@
 """
-03_lightgbm_bayesian.py로 학습된 모델(3class/binary 둘 다)을 다시 불러와서 결과를
-엑셀 파일 하나에 정리한다. export_bayesian_results.py(XGBoost), export_dnn_bayesian_
-results.py(DNN)와 시트 구성을 동일하게 맞춰서 세 모델을 나란히 비교하기 쉽게 했다.
+02_dnn_bayesian.py로 학습된 모델(3class/binary 둘 다)을 다시 불러와서 결과를 엑셀
+파일 하나에 정리한다. 01_export_xgboost_results.py(XGBoost)와 시트 구성을 동일하게
+맞춰서 두 모델을 나란히 비교하기 쉽게 했다.
+*** GPU/torch가 설치된 별도 가상환경에서 실행할 것 *** (GPU 없이 CPU로도 돌아가지만
+torch 자체는 설치되어 있어야 한다)
 
-시트 구성은 다른 두 export 스크립트와 동일: 하이퍼파라미터/성능지표/탐색기록/
+시트 구성은 01_export_xgboost_results.py와 동일: 하이퍼파라미터/성능지표/탐색기록/
 예측_{역할}_{3종분류|이진분류}.
 
-모델 로딩 시 lgb.Booster(model_file=...) 대신 model_str로 읽는 이유: LightGBM의
-파일 로딩도 저장과 마찬가지로 C API의 fopen을 쓰는데, 이 프로젝트 경로에 한글이
-포함돼 있어서 그대로 두면 파일을 못 여는 문제가 있다. 파이썬 자체 파일 IO로 문자열을
-읽어서 model_str로 넘기면 우회된다.
-
-출력: models/03_lightgbm_bayesian_results.xlsx
+출력: models/02_dnn_bayesian_results.xlsx
 """
 import json
 import sys
 from pathlib import Path
 
-import lightgbm as lgb
 import numpy as np
 import pandas as pd
+import torch
 from sklearn.metrics import (
     accuracy_score, f1_score, precision_score, recall_score, roc_auc_score,
 )
+from torch.utils.data import DataLoader
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from data_utils import CATEGORICAL_COLS, MODEL_DIR, load_role, numeric_feature_cols  # noqa: E402
-from feature_selection import select_uncorrelated_features  # noqa: E402
+from data_utils import MODEL_DIR  # noqa: E402
+from dnn_bayesian_utils import DEVICE, TabularMLP, prepare_data  # noqa: E402
 
-CORR_THRESHOLD = 0.9
 LABEL_NAMES_3CLASS = {0: "안다침", 1: "어깨", 2: "팔꿈치"}
 LABEL_NAMES_BINARY = {0: "안다침", 1: "어깨또는팔꿈치"}
 LABEL_MODE_KOR = {"3class": "3종분류", "binary": "이진분류"}
-
-
-def load_model_and_data(role: str, label_mode: str):
-    summary = json.loads(
-        (MODEL_DIR / f"03_{role}_lightgbm_bayesian_{label_mode}_summary.json").read_text(encoding="utf-8")
-    )
-    splits = load_role(role, exclude_other=True, binarize=(label_mode == "binary"))
-    all_num_cols = numeric_feature_cols(splits["train"])
-    kept_num_cols = select_uncorrelated_features(splits["train"], all_num_cols, threshold=CORR_THRESHOLD)
-    feature_cols = kept_num_cols + CATEGORICAL_COLS
-
-    model_path = MODEL_DIR / f"03_{role}_lightgbm_bayesian_{label_mode}.txt"
-    booster = lgb.Booster(model_str=model_path.read_text(encoding="utf-8"))
-
-    return booster, splits, feature_cols, summary
-
-
-def predict_proba(booster, X, label_mode: str):
-    raw = booster.predict(X)
-    if label_mode == "binary":
-        return np.column_stack([1 - raw, raw])
-    return raw
 
 
 def compute_metrics(y_true, y_pred, y_proba, label_mode: str):
@@ -74,6 +49,18 @@ def compute_metrics(y_true, y_pred, y_proba, label_mode: str):
     )
 
 
+def predict_split(model, loader):
+    model.eval()
+    all_pred, all_proba = [], []
+    with torch.no_grad():
+        for x_num, x_cat, _y in loader:
+            x_num, x_cat = x_num.to(DEVICE), x_cat.to(DEVICE)
+            proba = torch.softmax(model(x_num, x_cat), dim=1).cpu().numpy()
+            all_proba.append(proba)
+            all_pred.append(proba.argmax(axis=1))
+    return np.concatenate(all_pred), np.concatenate(all_proba)
+
+
 def main():
     hyperparam_rows = []
     metrics_rows = []
@@ -82,18 +69,27 @@ def main():
 
     for role in ("bullpen", "starter"):
         for label_mode in ("3class", "binary"):
-            booster, splits, feature_cols, summary = load_model_and_data(role, label_mode)
-            p = summary["best_params"]
+            summary = json.loads(
+                (MODEL_DIR / f"02_{role}_dnn_bayesian_{label_mode}_summary.json").read_text(encoding="utf-8")
+            )
+            datasets, meta, _y_train, _splits = prepare_data(role, label_mode)
             label_names = LABEL_NAMES_BINARY if label_mode == "binary" else LABEL_NAMES_3CLASS
+
+            model = TabularMLP(
+                num_dim=meta["num_dim"], p_throws_vocab=meta["p_throws_vocab_size"],
+                country_vocab=meta["country_vocab_size"], hidden_sizes=summary["hidden_sizes"],
+                num_classes=summary["n_classes"], dropout=summary["best_params"]["dropout"],
+            ).to(DEVICE)
+            model.load_state_dict(
+                torch.load(MODEL_DIR / f"02_{role}_dnn_bayesian_{label_mode}.pt", map_location=DEVICE)
+            )
 
             pred_rows = []
             role_metrics = {}
             for split in ("train", "val", "test"):
-                df = splits[split]
-                X = df[feature_cols]
-                y_true = df["label"].astype(int).to_numpy()
-                proba = predict_proba(booster, X, label_mode)
-                pred = proba.argmax(axis=1)
+                loader = DataLoader(datasets[split], batch_size=512)
+                pred, proba = predict_split(model, loader)
+                y_true = datasets[split].y.numpy()
 
                 role_metrics[split] = compute_metrics(y_true, pred, proba, label_mode)
                 metrics_rows.append({
@@ -108,21 +104,21 @@ def main():
                 }))
             prediction_frames[f"{role}_{label_mode}"] = pd.concat(pred_rows, ignore_index=True)
 
+            p = summary["best_params"]
             hyperparam_rows.append({
                 "role": role, "label_mode": LABEL_MODE_KOR[label_mode],
-                "num_leaves": round(p["num_leaves"], 3), "learning_rate": round(p["learning_rate"], 5),
-                "feature_fraction": round(p["feature_fraction"], 3),
-                "bagging_fraction": round(p["bagging_fraction"], 3),
-                "min_child_samples": round(p["min_child_samples"], 3),
-                "reg_lambda": round(p["reg_lambda"], 3),
-                "n_features_used": len(feature_cols),
+                "learning_rate": round(10 ** p["learning_rate"], 6),
+                "hidden_layer_init": round(p["hidden_layer_init"], 3),
+                "hidden_node_init": round(p["hidden_node_init"], 3),
+                "batch_size": int(p["batch_size"]), "dropout": round(p["dropout"], 3),
+                "hidden_sizes": str(summary["hidden_sizes"]), "pca_dim": summary["pca_dim"],
                 "train_auc": round(role_metrics["train"]["roc_auc"], 4),
                 "val_auc": round(role_metrics["val"]["roc_auc"], 4),
                 "test_auc": round(role_metrics["test"]["roc_auc"], 4),
             })
 
             trials = json.loads(
-                (MODEL_DIR / f"03_{role}_lightgbm_bayesian_{label_mode}_trials.json").read_text(encoding="utf-8")
+                (MODEL_DIR / f"02_{role}_dnn_bayesian_{label_mode}_trials.json").read_text(encoding="utf-8")
             )
             search_df = pd.json_normalize(
                 [{"role": role, "label_mode": LABEL_MODE_KOR[label_mode], "val_auc": t["target"], **t["params"]}
@@ -132,7 +128,7 @@ def main():
             search_df.insert(0, "순위", range(1, len(search_df) + 1))
             search_frames.append(search_df)
 
-    out_path = MODEL_DIR / "03_lightgbm_bayesian_results.xlsx"
+    out_path = MODEL_DIR / "02_dnn_bayesian_results.xlsx"
     with pd.ExcelWriter(out_path, engine="openpyxl") as writer:
         pd.DataFrame(hyperparam_rows).to_excel(writer, sheet_name="하이퍼파라미터", index=False)
         pd.DataFrame(metrics_rows).to_excel(writer, sheet_name="성능지표", index=False)
