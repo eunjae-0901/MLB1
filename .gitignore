@@ -3,6 +3,13 @@ __pycache__/
 *.pyc
 .claude/
 
-# 데이터는 src/의 스크립트를 순서대로 실행하면 재수집/재생성 가능하므로 git에는 올리지 않음
-# (statcast 원본만 해도 800MB+, 개별 파일이 GitHub 100MB 제한을 넘는 것도 있음)
-mlb_injury_project/data/
+# raw/interim/export는 src/의 스크립트를 순서대로 실행하면 재수집/재생성 가능하고
+# 용량도 커서(statcast 원본만 800MB+) git에는 올리지 않음.
+# data/processed/는 DNN 학습에 바로 필요해서 예외적으로 올림(전체 127MB, 개별 파일
+# 최대 59MB로 GitHub 100MB 제한 안에 들어옴).
+mlb_injury_project/data/raw/
+mlb_injury_project/data/interim/
+mlb_injury_project/data/export/
+
+# 학습된 모델 결과물(.json/.pt)과 결과 엑셀은 코드가 아니라 산출물이라 제외
+mlb_injury_project/models/
