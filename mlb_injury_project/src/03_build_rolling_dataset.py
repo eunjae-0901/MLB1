@@ -55,6 +55,12 @@ BULLPEN_WINDOW_DAYS = 14
 STARTER_WINDOW_STARTS = 3
 PREDICTION_HORIZON_DAYS = 14  # 불펜 14일 window / 선발 3경기 window 모두 "다음 14일" 예측으로 통일
 
+# 항목 4-1(다기간 workload 변수): 기존 14일 하나만으로는 "최근에 몰아서 던졌는지"를
+# 구분 못 해서, 더 짧은 기간의 등판수/투구수를 추가로 집계한다(불펜 전용 - 선발은
+# 등판 간격이 며칠 단위라 3/7일 구간 개념이 안 맞아 경기 단위 변수를 따로 둔다).
+BULLPEN_WORKLOAD_SHORT_DAYS = 3
+BULLPEN_WORKLOAD_MED_DAYS = 7
+
 # 선발의 "최근 3경기"는 횟수(ROWS) 기준이라 시즌 경계를 모르고 그냥 이어붙인다. 그래서
 # 새 시즌 첫 등판은 작년 시즌 마지막 등판(몇 달 전)이 3경기 평균에 섞여버리는 문제가 있었다.
 # 직전 등판과 이 값(일) 넘게 벌어지면 오프시즌을 건넌 것으로 보고 그 이전 등판은 아예
@@ -252,14 +258,51 @@ def _rolling_select(frame_clause: str, partition_cols: str = "player_id") -> str
     return ",\n        ".join(lines)
 
 
+def _workload_only_select(frame_clause: str, suffix: str, partition_cols: str = "player_id") -> str:
+    """항목 4-1용: 등판수/투구수만 짧은 기간(3일/7일)으로 따로 집계한다.
+    전체 56개 지표를 다 3중으로 늘리면 컬럼이 폭증하니, 여기선 workload 관련
+    두 개만 뽑는다."""
+    return (
+        f"SUM(n_pitches) OVER (PARTITION BY {partition_cols} ORDER BY game_date {frame_clause}) "
+        f"AS roll_n_pitches_{suffix},\n        "
+        f"COUNT(*) OVER (PARTITION BY {partition_cols} ORDER BY game_date {frame_clause}) "
+        f"AS roll_n_appearances_{suffix}"
+    )
+
+
 def build_rolling_windows(con: duckdb.DuckDBPyConnection):
     # 불펜: 최근 14일 (날짜 기준 RANGE 프레임). 오프시즌 공백은 항상 14일보다 훨씬 길어서
     # (실측 최소 61일) 시즌 경계를 따로 안 챙겨도 작년 데이터가 섞일 수 없다.
+    #
+    # 여기에 항목 4-1(다기간 workload/휴식) 변수를 추가한다:
+    #   - 3일/7일 짧은 기간 등판수·투구수 (14일 하나만으론 "최근에 몰아 던졌는지" 구분 불가)
+    #   - 최근 14일 등판 간격의 평균/최솟값: days_since_prev_game 자체가 "그 등판 시점의
+    #     직전 간격"이라, 14일 RANGE 프레임으로 AVG/MIN을 내면 그대로 "최근 등판들의
+    #     간격 평균/최솟값"이 된다(새로 복잡한 배열 계산 안 해도 됨).
+    #   - 연투 여부(back_to_back): 직전 간격이 1일 이하
+    #   - 3일 연속 등판 여부(three_straight): 이번 등판과 그 직전 등판이 둘 다 간격 1일 이하
+    #     (예: 날짜 D, D-1, D-2에 다 등판)
     con.execute(f"""
         CREATE OR REPLACE TABLE bullpen_rolling AS
         SELECT
             player_id, game_pk, game_date, p_throws, age, days_since_prev_game,
-            {_rolling_select(f"RANGE BETWEEN INTERVAL {BULLPEN_WINDOW_DAYS - 1} DAYS PRECEDING AND CURRENT ROW")}
+            {_rolling_select(f"RANGE BETWEEN INTERVAL {BULLPEN_WINDOW_DAYS - 1} DAYS PRECEDING AND CURRENT ROW")},
+            {_workload_only_select(f"RANGE BETWEEN INTERVAL {BULLPEN_WORKLOAD_SHORT_DAYS - 1} DAYS PRECEDING AND CURRENT ROW", "3d")},
+            {_workload_only_select(f"RANGE BETWEEN INTERVAL {BULLPEN_WORKLOAD_MED_DAYS - 1} DAYS PRECEDING AND CURRENT ROW", "7d")},
+            AVG(days_since_prev_game) OVER (
+                PARTITION BY player_id ORDER BY game_date
+                RANGE BETWEEN INTERVAL {BULLPEN_WINDOW_DAYS - 1} DAYS PRECEDING AND CURRENT ROW
+            ) AS roll_avg_rest_days_14d,
+            MIN(days_since_prev_game) OVER (
+                PARTITION BY player_id ORDER BY game_date
+                RANGE BETWEEN INTERVAL {BULLPEN_WINDOW_DAYS - 1} DAYS PRECEDING AND CURRENT ROW
+            ) AS roll_min_rest_days_14d,
+            CAST(COALESCE(days_since_prev_game <= 1, false) AS INTEGER) AS back_to_back_flag,
+            CAST(COALESCE(
+                days_since_prev_game <= 1
+                AND LAG(days_since_prev_game) OVER (PARTITION BY player_id ORDER BY game_date) <= 1,
+                false
+            ) AS INTEGER) AS three_straight_flag
         FROM pitcher_game_role
         WHERE is_start = false
     """)
@@ -284,6 +327,8 @@ def build_rolling_windows(con: duckdb.DuckDBPyConnection):
                 AS season_group
         FROM gapped
     """)
+    # 선발용 항목 4-1 변수: 불펜과 달리 등판 간격이 며칠 단위라 3/7일 구간 개념이
+    # 안 맞아서, 경기 단위(직전 경기/최근 2경기/최근 3경기 최대치)로 대신한다.
     con.execute(f"""
         CREATE OR REPLACE TABLE starter_rolling AS
         SELECT
@@ -291,7 +336,16 @@ def build_rolling_windows(con: duckdb.DuckDBPyConnection):
             {_rolling_select(
                 f"ROWS BETWEEN {STARTER_WINDOW_STARTS - 1} PRECEDING AND CURRENT ROW",
                 "player_id, season_group",
-            )}
+            )},
+            n_pitches AS last_game_pitches,
+            n_pitches + COALESCE(
+                LAG(n_pitches) OVER (PARTITION BY player_id, season_group ORDER BY game_date), 0
+            ) AS last_2game_pitches,
+            MAX(n_pitches) OVER (
+                PARTITION BY player_id, season_group ORDER BY game_date
+                ROWS BETWEEN {STARTER_WINDOW_STARTS - 1} PRECEDING AND CURRENT ROW
+            ) AS max_pitches_3g,
+            CAST(COALESCE(days_since_prev_game <= 4, false) AS INTEGER) AS short_rest_flag
         FROM starter_with_group
     """)
     for t in ("bullpen_rolling", "starter_rolling"):
@@ -318,6 +372,22 @@ def finalize_averages(con: duckdb.DuckDBPyConnection, table: str, role: str):
             )
         avg_cols.append(",\n        ".join(lines))
 
+    # 항목 4-1(다기간 workload/휴식) 변수 - 역할별로 이름이 다르다(불펜은 03_build_
+    # rolling_dataset.py의 build_rolling_windows에서 만든 3일/7일/휴식일 집계,
+    # 선발은 경기 단위 집계).
+    if role == "bullpen":
+        workload_cols = """
+            b.roll_n_pitches_3d AS n_pitches_3d, b.roll_n_appearances_3d AS n_appearances_3d,
+            b.roll_n_pitches_7d AS n_pitches_7d, b.roll_n_appearances_7d AS n_appearances_7d,
+            b.roll_avg_rest_days_14d AS avg_rest_days_14d,
+            b.roll_min_rest_days_14d AS min_rest_days_14d,
+            b.back_to_back_flag, b.three_straight_flag,
+        """
+    else:
+        workload_cols = """
+            b.last_game_pitches, b.last_2game_pitches, b.max_pitches_3g, b.short_rest_flag,
+        """
+
     con.execute(f"""
         CREATE OR REPLACE TABLE {table}_features AS
         SELECT
@@ -328,6 +398,7 @@ def finalize_averages(con: duckdb.DuckDBPyConnection, table: str, role: str):
             b.roll_n_appearances AS n_appearances_window,
             b.roll_outs_recorded / 3.0 AS innings_pitched_window,
             b.roll_complete_game_flag AS complete_games_window,
+            {workload_cols}
             bio.height_inches, bio.weight_lb, bio.birth_country,
             {",".join(avg_cols)}
         FROM {table} b
