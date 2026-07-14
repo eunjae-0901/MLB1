@@ -89,10 +89,12 @@ class TabularMLP(nn.Module):
         return self.head(combined)
 
 
-def prepare_data(role: str, label_mode: str = "3class"):
+def prepare_data(role: str, label_mode: str = "3class", use_pca: bool = True):
     """01_xgboost_bayesian.py와 동일한 상관관계 기반 feature selection을 적용한 뒤,
-    train 기준으로 표준화하고 PCA까지 적용한 numpy 배열을 반환한다.
-    label_mode="3class"면 0/1/2, "binary"면 1·2를 합친 0/1로 라벨링한다."""
+    train 기준으로 표준화하고(use_pca=True면 PCA까지 적용한) numpy 배열을 반환한다.
+    label_mode="3class"면 0/1/2, "binary"면 1·2를 합친 0/1로 라벨링한다.
+    use_pca=False면 PCA 없이 표준화까지만 적용한다(04_dnn_no_pca_bayesian.py에서
+    PCA가 성능에 미치는 영향을 확인하기 위해 사용)."""
     splits = load_role(role, exclude_other=True, binarize=(label_mode == "binary"))
     all_num_cols = numeric_feature_cols(splits["train"])
     kept_num_cols = select_uncorrelated_features(splits["train"], all_num_cols, threshold=CORR_THRESHOLD)
@@ -116,16 +118,20 @@ def prepare_data(role: str, label_mode: str = "3class"):
     for s in raw:
         raw[s]["X_num"] = (raw[s]["X_num"] - mean) / std
 
-    pca, (train_pca, val_pca, test_pca) = apply_pca(
-        raw["train"]["X_num"], raw["val"]["X_num"], raw["test"]["X_num"], n_components=PCA_VARIANCE
-    )
-    raw["train"]["X_num"], raw["val"]["X_num"], raw["test"]["X_num"] = train_pca, val_pca, test_pca
+    if use_pca:
+        pca, (train_pca, val_pca, test_pca) = apply_pca(
+            raw["train"]["X_num"], raw["val"]["X_num"], raw["test"]["X_num"], n_components=PCA_VARIANCE
+        )
+        raw["train"]["X_num"], raw["val"]["X_num"], raw["test"]["X_num"] = train_pca, val_pca, test_pca
+        num_dim = train_pca.shape[1]
+    else:
+        num_dim = raw["train"]["X_num"].shape[1]
 
     datasets = {
         s: TabularDataset(raw[s]["X_num"], raw[s]["X_cat"], raw[s]["y"]) for s in raw
     }
     meta = {
-        "num_dim": train_pca.shape[1],
+        "num_dim": num_dim,
         "p_throws_vocab_size": len(p_throws_vocab) + 1,
         "country_vocab_size": len(country_vocab) + 1,
         "kept_num_cols": kept_num_cols,
