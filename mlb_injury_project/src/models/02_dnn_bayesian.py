@@ -1,18 +1,23 @@
-"""
+﻿"""
 모델 2 (공식 파이프라인 1단계). DNN(MLP) + Bayesian Optimization, rolling-window
 데이터(bullpen/starter_window_dataset.parquet - 01_xgboost_bayesian.py와 완전히
-같은 입력/전처리). '그 외'(label=3) 행은 항상 제외하고, --label_mode로 두 가지
-분류 방식을 둘 다 지원한다(01번과 동일).
-  3class : 0(안다침)/1(어깨)/2(팔꿈치) 3종 분류
-  binary : 1과 2를 합쳐서 0(안다침) vs 1(어깨 또는 팔꿈치) 이진분류
-*** GPU/torch가 설치된 별도 가상환경에서 실행할 것 ***
+같은 입력/전처리). 01번과 다른 점은 딱 하나, 모델을 XGBoost 대신 딥러닝(MLP)으로
+바꾼 것뿐이다.
 
-01번과 다른 점은 딱 하나, 모델을 XGBoost 대신 딥러닝(MLP)으로 바꾼 것뿐이다.
-데이터/전처리/라벨 기준을 동일하게 맞춰야 두 모델 성능을 공정하게 비교할 수 있다.
+입력변수는 01번과 동일하게 상관계수 0.9 초과 컬럼을 먼저 제거하고, PCA는 적용하지
+않는다 - 표본(특히 어깨/팔꿈치 양성 표본)이 1~2%뿐인 극단적 불균형 데이터에서는
+부상과 관련된 신호가 분산이 작은(그래서 PCA가 잘라내는) 방향에 있을 수 있다는
+우려 때문에, 상관관계 기반 feature selection까지만 적용하고 PCA는 뺐다.
+
 - LSTM이 아니라 MLP를 쓰는 이유: rolling-window 데이터는 이미 14일/3경기를 평균으로
   뭉갠 표 데이터라 경기 순서(시계열) 정보 자체가 없다. 그래서 LSTM을 쓸 이유가 없고,
   경기 순서를 보존한 시계열 입력(.npz)에 LSTM을 쓰는 실험은 exploratory/에 있는
   05_dnn_lstm_bayesian.py 쪽에서 별도로 진행한다.
+
+'그 외'(label=3) 행은 항상 제외하고, --label_mode로 두 가지 분류 방식을 둘 다
+지원한다(01번과 동일).
+  3class : 0(안다침)/1(어깨)/2(팔꿈치) 3종 분류
+  binary : 1과 2를 합쳐서 0(안다침) vs 1(어깨 또는 팔꿈치) 이진분류
 
 은닉층 구조 결정 로직(determine_hidden_sizes)과 베이지안 탐색 방식은 exploratory의
 05_dnn_lstm_bayesian.py에서 그대로 가져왔다(첫 은닉층 노드 수/은닉층 수 두 값만
@@ -24,10 +29,7 @@
   hidden_node_init    (8, 128)   : 첫 은닉층 노드 수(n_1)
   batch_size          (128, 1024)
   dropout             (0.1, 0.5)
-
-입력변수 정리: 01번과 동일하게 상관계수 0.9 초과 컬럼을 먼저 제거하고, DNN 쪽은
-추가로 PCA(설명 분산 95%)까지 적용해서 차원을 한 번 더 줄인다 - 표본(특히 어깨/팔꿈치
-양성 표본) 대비 입력변수가 너무 많으면 딥러닝이 과적합하기 쉽다는 판단.
+*** GPU/torch가 설치된 별도 가상환경에서 실행할 것 ***
 
 중단 후 이어하기(resume): GPU 세션이 길게 도는 도중 끊길 수 있어서, 아래 두 단계 모두
 중간 저장을 해둔다. 다시 실행하면(같은 --role --label_mode로) 자동으로 이어서 진행하고,
@@ -143,7 +145,7 @@ def run(role: str, label_mode: str, n_iter: int, init_points: int, quick_epochs:
           f"{role.upper()}  device={DEVICE}\n{'=' * 70}")
     datasets, meta, y_train, _splits = prepare_data(role, label_mode)
     print(f"train={len(datasets['train']):,} val={len(datasets['val']):,} test={len(datasets['test']):,}")
-    print(f"PCA 이후 입력 차원: {meta['num_dim']}  클래스 수: {meta['n_classes']}")
+    print(f"입력 차원: {meta['num_dim']}  클래스 수: {meta['n_classes']}")
 
     class_weights = compute_class_weight("balanced", classes=np.arange(meta["n_classes"]), y=y_train)
 
@@ -254,7 +256,7 @@ def run(role: str, label_mode: str, n_iter: int, init_points: int, quick_epochs:
     summary_path.write_text(
         json.dumps({
             "role": role, "label_mode": label_mode,
-            "kept_num_cols": meta["kept_num_cols"], "pca_dim": meta["num_dim"],
+            "kept_num_cols": meta["kept_num_cols"], "input_dim": meta["num_dim"],
             "n_classes": meta["n_classes"],
             "best_params": p, "hidden_sizes": hidden_sizes,
             "val_auc": val_auc, "test_auc": test_auc,

@@ -1,4 +1,4 @@
-"""
+﻿"""
 02_dnn_bayesian.py로 학습된 모델(3class/binary 둘 다)을 다시 불러와서 결과를 엑셀
 파일 하나에 정리한다. 01_export_xgboost_results.py(XGBoost)와 시트 구성을 동일하게
 맞춰서 두 모델을 나란히 비교하기 쉽게 했다.
@@ -72,7 +72,7 @@ def main():
             summary = json.loads(
                 (MODEL_DIR / f"02_{role}_dnn_bayesian_{label_mode}_summary.json").read_text(encoding="utf-8")
             )
-            datasets, meta, _y_train, _splits = prepare_data(role, label_mode)
+            datasets, meta, _y_train, _splits = prepare_data(role, label_mode, use_pca=False)
             label_names = LABEL_NAMES_BINARY if label_mode == "binary" else LABEL_NAMES_3CLASS
 
             model = TabularMLP(
@@ -111,7 +111,7 @@ def main():
                 "hidden_layer_init": round(p["hidden_layer_init"], 3),
                 "hidden_node_init": round(p["hidden_node_init"], 3),
                 "batch_size": int(p["batch_size"]), "dropout": round(p["dropout"], 3),
-                "hidden_sizes": str(summary["hidden_sizes"]), "pca_dim": summary["pca_dim"],
+                "hidden_sizes": str(summary["hidden_sizes"]), "input_dim": summary["input_dim"],
                 "train_auc": round(role_metrics["train"]["roc_auc"], 4),
                 "val_auc": round(role_metrics["val"]["roc_auc"], 4),
                 "test_auc": round(role_metrics["test"]["roc_auc"], 4),
