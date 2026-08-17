@@ -46,5 +46,6 @@ python "새 방법론1 파일/01_collect_and_match_targets.py"
 1. `01_XGBoost_CPU.ipynb`: 사건 가중치와 class balance를 적용한 CPU 주 기준선
 2. `02_LSTM_GPU.ipynb`: 2025 논문 LSTM을 동적 snapshot 분류+회귀로 확장
 3. `03_ViT_GPU.ipynb`: 2025 논문 ViT를 동적 snapshot 분류+회귀로 확장
+4. `04_ResNet_GPU.ipynb`: LSTM의 신규 선수 일반화·calibration 개선용 1D Residual TCN
 
 공통 입력은 `02_build_100d_sequences.py`가 생성하는 20×33 시계열이다. XGBoost는 실행 완료 상태이며 LSTM과 ViT는 CUDA GPU가 필요하다. GPU 실행 후 `05_combine_all_results.py`를 실행하면 `results/all_models_summary.csv`와 비교 PNG가 생성된다.

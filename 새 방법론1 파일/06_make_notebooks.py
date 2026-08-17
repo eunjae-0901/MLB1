@@ -28,4 +28,11 @@ make("03_ViT_GPU.ipynb","Scenario 3 — 2025-paper ViT extension (GPU)",
      "%run 04_train_gpu_models.py --model vit --seed 52 --epochs 80",
      "%run 04_train_gpu_models.py --model vit --seed 62 --epochs 80",
      "%run 05_combine_all_results.py"])
-print("Created 01_XGBoost_CPU.ipynb, 02_LSTM_GPU.ipynb, 03_ViT_GPU.ipynb")
+make("04_ResNet_GPU.ipynb","Scenario 4 — Residual TCN improvement (GPU)",
+     "Compact 1D ResNet with dilated temporal convolutions, squeeze-and-excitation, personal deltas, prior injury history, label smoothing, and Validation Platt calibration.",[
+     "!pip install -r requirements-gpu.txt",
+     "%run 04_train_gpu_models.py --model resnet --seed 42 --epochs 120",
+     "%run 04_train_gpu_models.py --model resnet --seed 52 --epochs 120",
+     "%run 04_train_gpu_models.py --model resnet --seed 62 --epochs 120",
+     "%run 05_combine_all_results.py"])
+print("Created XGBoost, LSTM, ViT, and ResNet notebooks")
