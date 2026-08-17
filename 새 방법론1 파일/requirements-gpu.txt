@@ -1,0 +1,9 @@
+numpy
+pandas
+pyarrow
+scikit-learn
+torch>=2.2
+torchvision
+timm
+xgboost
+matplotlib

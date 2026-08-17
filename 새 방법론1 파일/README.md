@@ -40,3 +40,11 @@ python "새 방법론1 파일/01_collect_and_match_targets.py"
 ## 논문 평가 전략
 
 주 분석은 동일 선수의 과거 시즌 부상 및 workload 이력을 유지한다. 단, 선수 ID 자체는 모델 feature로 사용하지 않는다. 전체 Test 성능을 주 결과로 보고하고, Train 기간에 한 번도 등장하지 않은 `new_player` Test 성능을 추가 일반화 검증으로 함께 보고한다. `seen_in_train`과 `evaluation_cohort` 열로 두 코호트를 구분한다.
+
+## 모델 실험
+
+1. `01_XGBoost_CPU.ipynb`: 사건 가중치와 class balance를 적용한 CPU 주 기준선
+2. `02_LSTM_GPU.ipynb`: 2025 논문 LSTM을 동적 snapshot 분류+회귀로 확장
+3. `03_ViT_GPU.ipynb`: 2025 논문 ViT를 동적 snapshot 분류+회귀로 확장
+
+공통 입력은 `02_build_100d_sequences.py`가 생성하는 20×33 시계열이다. XGBoost는 실행 완료 상태이며 LSTM과 ViT는 CUDA GPU가 필요하다. GPU 실행 후 `05_combine_all_results.py`를 실행하면 `results/all_models_summary.csv`와 비교 PNG가 생성된다.
