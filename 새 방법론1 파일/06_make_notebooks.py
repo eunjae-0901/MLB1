@@ -12,18 +12,18 @@ def make(name,title,description,cells):
 
 make("01_XGBoost_CPU.ipynb","Scenario 1 — Event-aware weighted XGBoost (CPU)",
      "Main interpretable baseline. Train-only imputation, event weighting, class balance, Platt calibration, and Validation-selected F2 threshold.",[
-     "%run 02_build_100d_sequences.py", "%run 03_train_xgboost_cpu.py",
+     "%run 03_train_xgboost_cpu.py",
      "import pandas as pd\ndisplay(pd.read_csv('results/xgboost_weighted_metrics.csv'))"])
 make("02_LSTM_GPU.ipynb","Scenario 2 — 2025-paper LSTM extension (GPU)",
      "20 x 5-day sequence, event-aware weighted BCE, and auxiliary days-to-IL regression. Requires CUDA.",[
-     "!pip install -r requirements-gpu.txt", "%run 02_build_100d_sequences.py",
+     "!pip install -r requirements-gpu.txt",
      "%run 04_train_gpu_models.py --model lstm --seed 42 --epochs 100",
      "%run 04_train_gpu_models.py --model lstm --seed 52 --epochs 100",
      "%run 04_train_gpu_models.py --model lstm --seed 62 --epochs 100",
      "%run 05_combine_all_results.py"])
 make("03_ViT_GPU.ipynb","Scenario 3 — 2025-paper ViT extension (GPU)",
      "The 20 x 33 temporal matrix is resized to an image for pretrained ViT. Weighted classification plus days-to-IL regression. Requires CUDA and timm.",[
-     "!pip install -r requirements-gpu.txt", "%run 02_build_100d_sequences.py",
+     "!pip install -r requirements-gpu.txt",
      "%run 04_train_gpu_models.py --model vit --seed 42 --epochs 80",
      "%run 04_train_gpu_models.py --model vit --seed 52 --epochs 80",
      "%run 04_train_gpu_models.py --model vit --seed 62 --epochs 80",
