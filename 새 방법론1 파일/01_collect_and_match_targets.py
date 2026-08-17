@@ -19,11 +19,11 @@ HORIZONS = (30, 60, 100)
 
 
 def split_for_date(date: pd.Timestamp) -> str:
-    if date.year <= 2022:
+    if date.year <= 2021:
         return "train"
-    if date.year <= 2024:
+    if date.year <= 2023:
         return "validation"
-    if date.year == 2025:
+    if date.year <= 2025:
         return "test"
     return "out_of_scope"
 
@@ -114,6 +114,19 @@ def add_past_history(snapshots: pd.DataFrame, events: pd.DataFrame) -> pd.DataFr
     return out
 
 
+def add_generalization_cohorts(matched: pd.DataFrame) -> pd.DataFrame:
+    """Flag whether each validation/test pitcher was observed in Train."""
+    out = matched.copy()
+    train_pitchers = set(out.loc[out["split"].eq("train"), "player_id"])
+    out["seen_in_train"] = out["player_id"].isin(train_pitchers)
+    out["evaluation_cohort"] = np.select(
+        [out["split"].eq("train"), out["seen_in_train"]],
+        ["train", "seen_player"],
+        default="new_player",
+    )
+    return out
+
+
 def summaries(matched: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
     rows = []
     for (split, role), group in matched.groupby(["split", "role"]):
@@ -126,16 +139,37 @@ def summaries(matched: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
     return pd.DataFrame(rows), event
 
 
+def cohort_summary(matched: pd.DataFrame) -> pd.DataFrame:
+    rows = []
+    evaluation = matched.loc[matched["split"].isin(["validation", "test"])]
+    for (split, cohort, role), group in evaluation.groupby(["split", "evaluation_cohort", "role"]):
+        y = group["target_100d"].dropna().astype("int8")
+        positive = int(y.sum())
+        negative = int(len(y) - positive)
+        rows.append({
+            "split": split, "evaluation_cohort": cohort, "role": role,
+            "n_snapshots_total": len(group), "n_labeled_100d": len(y),
+            "n_censored_100d": int(group["target_100d"].isna().sum()),
+            "n_pitchers": int(group.loc[y.index, "player_id"].nunique()),
+            "n_positive": positive, "n_negative": negative,
+            "positive_rate": float(y.mean()) if len(y) else np.nan,
+            "negative_to_positive_ratio": float(negative / positive) if positive else np.inf,
+        })
+    return pd.DataFrame(rows)
+
+
 def main() -> None:
     DATA.mkdir(parents=True, exist_ok=True); RESULTS.mkdir(parents=True, exist_ok=True)
     games = prepare_games(); events = prepare_arm_events()
     snapshots = select_five_day_snapshots(games)
-    matched = add_past_history(match_next_event(snapshots, events), events)
+    matched = add_generalization_cohorts(add_past_history(match_next_event(snapshots, events), events))
     balance, coverage = summaries(matched)
+    cohorts = cohort_summary(matched)
     games.to_parquet(DATA / "pitcher_game_features.parquet", index=False)
     matched.to_parquet(DATA / "dynamic_snapshot_targets.parquet", index=False)
     balance.to_csv(RESULTS / "target_balance.csv", index=False)
     coverage.to_csv(RESULTS / "event_coverage.csv", index=False)
+    cohorts.to_csv(RESULTS / "generalization_cohorts.csv", index=False)
     audit = {
         "n_game_rows": len(games), "n_snapshots": len(matched), "n_pitchers": int(matched.player_id.nunique()),
         "n_strict_arm_events_source": len(events), "duplicate_player_date": int(matched.duplicated(["player_id", "game_date"]).sum()),
@@ -143,11 +177,13 @@ def main() -> None:
         "future_target_max_days": int(matched.loc[matched.target_100d.eq(1), "days_to_next_arm_il"].max()),
         "injury_observation_cutoff": events["il_start_date"].max().date().isoformat(),
         "censored_100d_snapshots": int(matched["target_100d"].isna().sum()),
-        "input_cutoff_rule": "game_date and prior only", "split_rule": "train<=2022; validation=2023-2024; test=2025",
+        "input_cutoff_rule": "game_date and prior only", "split_rule": "train=2016-2021; validation=2022-2023; test=2024-2025",
     }
     (RESULTS / "data_audit.json").write_text(json.dumps(audit, indent=2), encoding="utf-8")
     print("\nTarget balance")
     print(balance.to_string(index=False))
+    print("\nSeen/new-player evaluation cohorts (100d)")
+    print(cohorts.to_string(index=False))
     print("\nAudit")
     print(json.dumps(audit, indent=2))
 

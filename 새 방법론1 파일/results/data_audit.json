@@ -9,5 +9,5 @@
   "injury_observation_cutoff": "2025-09-25",
   "censored_100d_snapshots": 6833,
   "input_cutoff_rule": "game_date and prior only",
-  "split_rule": "train<=2022; validation=2023-2024; test=2025"
+  "split_rule": "train=2016-2021; validation=2022-2023; test=2024-2025"
 }
