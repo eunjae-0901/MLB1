@@ -3,8 +3,8 @@ from pathlib import Path
 import pandas as pd
 
 HERE=Path(__file__).resolve().parent; OUT=HERE/"results"
-files=[OUT/"xgboost_weighted_metrics.csv",*OUT.glob("lstm_seed*_metrics.csv"),
-       *OUT.glob("vit_seed*_metrics.csv"),*OUT.glob("resnet_seed*_metrics.csv")]
+files=[OUT/"xgboost_weighted_metrics.csv",OUT/"stack_ensemble_metrics.csv",*OUT.glob("lstm_seed*_metrics.csv"),
+       *OUT.glob("vit_seed*_metrics.csv"),*OUT.glob("resnet_seed*_metrics.csv"),*OUT.glob("gbm_seed*_metrics.csv")]
 frames=[pd.read_csv(f) for f in files if f.exists()]
 if not frames: raise SystemExit("No metric files found.")
 all_metrics=pd.concat(frames,ignore_index=True)

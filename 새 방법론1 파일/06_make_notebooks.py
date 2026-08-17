@@ -35,4 +35,11 @@ make("04_ResNet_GPU.ipynb","Scenario 4 — Residual TCN improvement (GPU)",
      "%run 04_train_gpu_models.py --model resnet --seed 52 --epochs 120",
      "%run 04_train_gpu_models.py --model resnet --seed 62 --epochs 120",
      "%run 05_combine_all_results.py"])
-print("Created XGBoost, LSTM, ViT, and ResNet notebooks")
+make("05_GBM_Engineered.ipynb","Scenario 5 — Domain-engineered workload features + LightGBM (CPU)",
+     "Acute:chronic workload ratios, rest-day patterns, velocity/spin/extension trend deltas, and season/career cumulative load replace the flattened 20x33 raw sequence. Train-only event weighting, Validation Platt calibration, and Validation-selected F1 threshold.",[
+     "%run 05_build_engineered_features.py",
+     "%run 05_train_gbm.py --seed 42",
+     "%run 05_train_gbm.py --seed 52",
+     "%run 05_train_gbm.py --seed 62",
+     "%run 05_combine_all_results.py"])
+print("Created XGBoost, LSTM, ViT, ResNet, and GBM notebooks")

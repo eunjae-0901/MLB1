@@ -1,0 +1,8 @@
+{
+  "seed": 62,
+  "class_factor": 101.70888157894737,
+  "threshold": 0.08695088480620346,
+  "val_pr_auc": 0.12217828881228801,
+  "best_iteration": 60,
+  "n_input_features": 62
+}
