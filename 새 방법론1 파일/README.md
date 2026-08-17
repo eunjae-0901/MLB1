@@ -1,0 +1,37 @@
+# 새 방법론 1: 동적 위험 예측 데이터
+
+Notion의 `(발표)MLB 투수 단기 부상 예측 연구 - (5) 동적 위험 예측으로 연구 재설계 (~26.08.18)`에 맞춘 데이터 파이프라인이다.
+
+## 데이터 정의
+
+- 예측 단위: 투수 × 현재 snapshot
+- snapshot: 실제 등판일 가운데 직전 선택 시점과 최소 5일 간격인 시점
+- 입력 정보: snapshot 당일까지 알려진 정보만 사용
+- 주 타깃: 향후 100일 이내 strict shoulder/elbow IL
+- 보조 타깃: 향후 30일 및 60일 이내 strict shoulder/elbow IL
+- 회귀 타깃: 다음 strict shoulder/elbow IL까지 남은 일수
+- 시간 분할: Train 2016–2022, Validation 2023–2024, Final Test 2025
+- 역할 구분: starter / bullpen
+- 이벤트 가중치: 하나의 부상 사건에 연결된 양성 snapshot 가중치의 합이 1이 되도록 설정
+
+## 실행
+
+```powershell
+python "새 방법론1 파일/01_collect_and_match_targets.py"
+```
+
+## 산출물
+
+- `data/dynamic_snapshot_targets.parquet`: snapshot, 타깃, 이벤트 가중치
+- `data/pitcher_game_features.parquet`: 투수-경기 단위 원천 feature
+- `results/target_balance.csv`: split/role/horizon별 타깃 비율
+- `results/event_coverage.csv`: 부상 이벤트별 연결 snapshot 수
+- `results/data_audit.json`: 중복, 기간, 관찰 마감일 검사
+
+대용량 `data/` 산출물은 Git에서 제외되며 스크립트로 재생성한다. 결과 요약 CSV와 audit JSON은 추적한다.
+
+## 우측 검열 처리
+
+부상 원자료의 마지막 관찰일보다 예측 horizon이 뒤로 넘어가는 snapshot은 음성으로 확정할 수 없다. 따라서 `observed_30d`, `observed_60d`, `observed_100d`에 추적 완료 여부를 저장하고, 추적이 끝나지 않은 타깃은 결측 처리한다. 모델 학습과 평가는 해당 horizon의 결측 행을 제외해야 한다.
+
+다음 단계에서는 이 index를 기준으로 최근 100일을 20개의 5일 bin으로 만들고, Train에서만 전처리·불균형 대응·threshold 선택을 수행한다.

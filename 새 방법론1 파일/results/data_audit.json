@@ -1,0 +1,13 @@
+{
+  "n_game_rows": 194883,
+  "n_snapshots": 116432,
+  "n_pitchers": 2144,
+  "n_strict_arm_events_source": 1722,
+  "duplicate_player_date": 0,
+  "future_target_min_days": 1,
+  "future_target_max_days": 100,
+  "injury_observation_cutoff": "2025-09-25",
+  "censored_100d_snapshots": 6833,
+  "input_cutoff_rule": "game_date and prior only",
+  "split_rule": "train<=2022; validation=2023-2024; test=2025"
+}
