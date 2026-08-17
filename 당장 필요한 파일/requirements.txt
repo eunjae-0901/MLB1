@@ -4,3 +4,8 @@ scikit-learn
 xgboost
 torch
 bayesian-optimization
+matplotlib
+openpyxl
+imbalanced-learn
+shap
+timm
