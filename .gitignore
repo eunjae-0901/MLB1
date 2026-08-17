@@ -3,13 +3,9 @@ __pycache__/
 *.pyc
 .claude/
 
-# raw/interim/export는 src/의 스크립트를 순서대로 실행하면 재수집/재생성 가능하고
-# 용량도 커서(statcast 원본만 800MB+) git에는 올리지 않음.
-# data/processed/는 DNN 학습에 바로 필요해서 예외적으로 올림(전체 127MB, 개별 파일
-# 최대 59MB로 GitHub 100MB 제한 안에 들어옴).
-mlb_injury_project/data/raw/
-mlb_injury_project/data/interim/
-mlb_injury_project/data/export/
-
-# 학습된 모델 결과물(.json/.pt)과 결과 엑셀은 코드가 아니라 산출물이라 제외
-mlb_injury_project/models/
+# 필요없는거/ 는 예전 파이프라인 전체를 "혹시 몰라서" 남겨둔 백업 폴더.
+# 스크립트(노트북)만 참고용으로 추적하고, 용량 큰 원본/중간 데이터(raw+interim+
+# export+processed 합쳐서 1GB+)와 예전 모델 산출물(.json/.pt/.xlsx)은 재생성
+# 가능하고 지금 안 쓰는 거라 git에는 올리지 않음.
+필요없는거/mlb_injury_project/data/
+필요없는거/mlb_injury_project/models/
