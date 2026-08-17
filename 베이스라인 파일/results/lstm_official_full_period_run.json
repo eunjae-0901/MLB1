@@ -1,0 +1,41 @@
+{
+  "model": "lstm",
+  "delta_mode": "official_full_period",
+  "seeds": [
+    100,
+    200,
+    300,
+    400,
+    500,
+    600,
+    700,
+    800,
+    900,
+    1000
+  ],
+  "completed_seeds": [
+    100,
+    200,
+    300,
+    400,
+    500,
+    600,
+    700,
+    800,
+    900,
+    1000
+  ],
+  "shape": [
+    620,
+    224,
+    102
+  ],
+  "cuda": true,
+  "gpu": "NVIDIA GeForce RTX 5090",
+  "torch": "2.11.0+cu128",
+  "cuda_runtime": "12.8",
+  "batch_size": 128,
+  "mixed_precision": false,
+  "positive_weight": 5,
+  "resume_strategy": "one seed per invocation; completed seed metrics/predictions preserved under ignored checkpoints/resume"
+}
