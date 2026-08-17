@@ -7,6 +7,7 @@ __pycache__/
 **/data/case_control/*_dataset_*.csv
 **/scenarios/**/results/models/
 **/scenarios/**/results/*predictions*.csv
+**/scenarios/**/data/
 
 # 필요없는거/ 는 예전 파이프라인 전체를 "혹시 몰라서" 남겨둔 백업 폴더.
 # 스크립트(노트북)만 참고용으로 추적하고, 용량 큰 원본/중간 데이터(raw+interim+
