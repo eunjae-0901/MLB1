@@ -1,0 +1,13 @@
+role,group,mean_abs_shap,shap_share
+bullpen,absolute Statcast,0.52166235,0.29053298
+bullpen,demographics,0.11486443,0.063972235
+bullpen,injury history,0.17018218,0.09478072
+bullpen,personal delta,0.8946222,0.49824804
+bullpen,runner-context gap,0.034042396,0.018959465
+bullpen,workload,0.060162302,0.033506602
+starter,absolute Statcast,0.1740401,0.30141538
+starter,demographics,0.027790887,0.048130296
+starter,injury history,0.037926916,0.06568462
+starter,personal delta,0.29330295,0.50796354
+starter,runner-context gap,0.010340717,0.017908812
+starter,workload,0.034007862,0.05889731

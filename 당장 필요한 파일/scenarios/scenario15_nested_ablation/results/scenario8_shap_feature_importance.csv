@@ -1,0 +1,209 @@
+role,feature,rank,mean_abs_shap,mean_shap,group,shap_share
+bullpen,delta_w_pct_CT,1,0.11454607,-0.06675892,personal delta,0.06379492
+bullpen,delta_w_xSL,2,0.08431588,-0.06445665,personal delta,0.046958614
+bullpen,previous_arm_injury,3,0.07249613,0.036724336,injury history,0.04037576
+bullpen,days_since_last_IL,4,0.06649378,-0.03903193,injury history,0.03703283
+bullpen,birth_country,5,0.060012225,-0.007539449,demographics,0.033423014
+bullpen,delta_w_vFB,6,0.05909119,0.0002991126,personal delta,0.032910056
+bullpen,delta_w_pct_SP,7,0.05317886,-0.04361793,personal delta,0.029617265
+bullpen,delta_w_vSI,8,0.050678268,-0.020981576,personal delta,0.028224591
+bullpen,w_xFB,9,0.04167605,-0.023096982,absolute Statcast,0.023210924
+bullpen,w_ext_all,10,0.040425222,-0.032917336,absolute Statcast,0.022514293
+bullpen,innings_pitched_window,11,0.0401936,-0.010428887,workload,0.022385294
+bullpen,delta_w_zCB,12,0.03696734,-0.0100876745,personal delta,0.020588472
+bullpen,delta_w_pct_CH,13,0.036941655,-0.019365711,personal delta,0.020574167
+bullpen,w_zSI,14,0.034681015,-0.025135016,absolute Statcast,0.019315133
+bullpen,delta_w_extCB,15,0.03175654,0.015907092,personal delta,0.017686384
+bullpen,delta_w_extFB,16,0.027139371,-0.019770939,personal delta,0.015114914
+bullpen,w_pct_SL,17,0.026327264,0.00032768596,absolute Statcast,0.014662622
+bullpen,delta_w_vSL,18,0.025940998,-0.008141739,personal delta,0.014447495
+bullpen,delta_w_z_all,19,0.025530722,-0.021931918,personal delta,0.014218998
+bullpen,delta_w_pct_SI,20,0.025453692,-0.020182487,personal delta,0.014176098
+bullpen,w_vCH,21,0.025006855,0.0044111134,absolute Statcast,0.013927237
+bullpen,delta_w_zFB,22,0.023839474,-0.012433889,personal delta,0.01327708
+bullpen,weight_lb,23,0.023790142,-0.016616134,demographics,0.013249605
+bullpen,w_vSL,24,0.021952318,-0.012240868,absolute Statcast,0.0122260535
+bullpen,w_xSL,25,0.021016182,-0.0143384235,absolute Statcast,0.011704685
+bullpen,delta_w_spin_all,26,0.020994557,-0.013353123,personal delta,0.011692641
+bullpen,delta_w_extSL,27,0.020458732,-0.004169265,personal delta,0.01139422
+bullpen,w_spin_all,28,0.02017899,-0.013420009,absolute Statcast,0.011238422
+bullpen,delta_w_zSL,29,0.019618282,-0.016315416,personal delta,0.010926143
+bullpen,w_vFB,30,0.01910024,-0.016603315,absolute Statcast,0.010637626
+bullpen,w_spinCB,31,0.018839452,-0.0025453721,absolute Statcast,0.010492384
+bullpen,w_zCT,32,0.018651143,-0.009077921,absolute Statcast,0.010387507
+bullpen,w_zCH,33,0.018524189,-0.012873322,absolute Statcast,0.010316802
+bullpen,delta_w_ext_all,34,0.018324919,0.0044688177,personal delta,0.010205821
+bullpen,past_365d_IL_days,35,0.01737379,-0.003937209,injury history,0.009676103
+bullpen,height_inches,36,0.017183743,-0.007110421,demographics,0.009570259
+bullpen,w_spinSL,37,0.016904963,-0.0010207583,absolute Statcast,0.009414996
+bullpen,w_spinFB,38,0.016218955,-0.006587534,absolute Statcast,0.009032932
+bullpen,w_zSL,39,0.016191432,-0.012416407,absolute Statcast,0.009017604
+bullpen,delta_w_spinSL,40,0.015977949,-0.004189809,personal delta,0.008898707
+bullpen,delta_w_xFB,41,0.014925305,-0.0050661494,personal delta,0.008312452
+bullpen,w_pct_CT,42,0.014092952,-0.0055699036,absolute Statcast,0.007848883
+bullpen,delta_w_pct_FB,43,0.013953919,-0.012623493,personal delta,0.0077714506
+bullpen,delta_w_x_all,44,0.013718942,-0.009992659,personal delta,0.0076405834
+bullpen,delta_w_vCT,45,0.013042423,-0.009959388,personal delta,0.0072638053
+bullpen,w_pct_FB,46,0.0130403675,-0.0106141055,absolute Statcast,0.00726266
+bullpen,w_zFB,47,0.012974756,-0.006474169,absolute Statcast,0.007226119
+bullpen,age,48,0.012441697,-0.008797285,demographics,0.0069292383
+bullpen,delta_w_pct_CB,49,0.012279445,-0.009255478,personal delta,0.006838875
+bullpen,w_pct_SI,50,0.01206803,-0.010519194,absolute Statcast,0.00672113
+bullpen,n_pitches_window,51,0.011971546,-0.003802376,workload,0.0066673947
+bullpen,delta_w_v_all,52,0.011477702,-0.0020556515,personal delta,0.0063923546
+bullpen,w_spinCH,53,0.011298296,-0.007013725,absolute Statcast,0.0062924367
+bullpen,w_v_all,54,0.011226831,-0.00664583,absolute Statcast,0.0062526353
+bullpen,delta_w_zSI,55,0.011145022,-0.010084315,personal delta,0.0062070726
+bullpen,past_IL_count,56,0.010701227,-0.0066055604,injury history,0.005959907
+bullpen,w_vCT,57,0.009164023,-0.0074216896,absolute Statcast,0.005103782
+bullpen,runner_gap_pfx_x,58,0.009009452,-0.0058150804,runner-context gap,0.005017695
+bullpen,delta_w_spinSI,59,0.008643874,-0.0069324165,personal delta,0.004814091
+bullpen,w_vSP,60,0.008551495,-0.0043286653,absolute Statcast,0.004762642
+bullpen,delta_w_pct_SL,61,0.008520373,-0.0043269577,personal delta,0.0047453092
+bullpen,w_x_all,62,0.0084758755,-0.006690176,absolute Statcast,0.0047205267
+bullpen,w_pct_CH,63,0.008381169,-0.005244377,absolute Statcast,0.0046677813
+bullpen,delta_w_spinCH,64,0.008206247,-0.0052853455,personal delta,0.004570361
+bullpen,w_z_all,65,0.008156385,-0.005646256,absolute Statcast,0.004542591
+bullpen,delta_w_extCT,66,0.008140856,-0.0067654466,personal delta,0.0045339423
+bullpen,w_pct_SP,67,0.008121911,-0.0052220006,absolute Statcast,0.0045233914
+bullpen,delta_w_extSI,68,0.007945904,-0.005236894,personal delta,0.004425366
+bullpen,runner_gap_pfx_z,69,0.007437308,-0.0044259406,runner-context gap,0.0041421102
+bullpen,w_zCB,70,0.007341196,-0.005363002,absolute Statcast,0.004088582
+bullpen,delta_w_spinFB,71,0.0071535287,-0.0028300413,personal delta,0.0039840634
+bullpen,w_spinSI,72,0.0071043097,-0.0050229128,absolute Statcast,0.0039566513
+bullpen,delta_w_xCH,73,0.007097239,-0.00521939,personal delta,0.0039527137
+bullpen,runner_gap_extension,74,0.006776905,-0.0060385126,runner-context gap,0.0037743077
+bullpen,delta_w_vCH,75,0.0067203436,-0.0033915958,personal delta,0.0037428066
+bullpen,delta_w_xCB,76,0.0066574304,-0.0045792605,personal delta,0.003707768
+bullpen,delta_w_vCB,77,0.0065342463,-0.0027106258,personal delta,0.003639162
+bullpen,delta_w_zCH,78,0.0062484946,-0.0022544225,personal delta,0.0034800165
+bullpen,w_vCB,79,0.00621205,-0.0029788434,absolute Statcast,0.0034597192
+bullpen,delta_w_xSI,80,0.0062026354,-0.003163365,personal delta,0.003454476
+bullpen,n_appearances_window,81,0.00594651,-0.0023533034,workload,0.00331183
+bullpen,delta_w_spinCT,82,0.005812914,-0.0021173256,personal delta,0.0032374256
+bullpen,runner_gap_velocity,83,0.0058047716,-0.0046212245,runner-context gap,0.0032328907
+bullpen,delta_w_xCT,84,0.0057507902,-0.0044482844,personal delta,0.0032028267
+bullpen,runner_gap_spin,85,0.0050139613,-0.0034884503,runner-context gap,0.0027924594
+bullpen,delta_w_extCH,86,0.0044107703,-0.0017458395,personal delta,0.0024565202
+bullpen,w_spinCT,87,0.004107579,-0.0028266478,absolute Statcast,0.002287662
+bullpen,w_xCT,88,0.004056003,-0.002298821,absolute Statcast,0.0022589373
+bullpen,w_pct_CB,89,0.004038836,-0.0019248491,absolute Statcast,0.0022493761
+bullpen,w_xCB,90,0.0033221585,-0.002049052,absolute Statcast,0.0018502322
+bullpen,delta_w_spinCB,91,0.0026959616,-0.0012705846,personal delta,0.0015014802
+bullpen,w_spinSP,92,0.0025954342,-0.0017327584,absolute Statcast,0.0014454927
+bullpen,past_shoulder_IL_count,93,0.0022527846,0.00012944183,injury history,0.0012546586
+bullpen,delta_w_xSP,94,0.0021245338,-0.0015031529,personal delta,0.001183231
+bullpen,days_since_prev_game,95,0.0020506456,-0.0011176661,workload,0.00114208
+bullpen,delta_w_extSP,96,0.0016945577,-0.0005872032,personal delta,0.00094376155
+bullpen,p_throws,97,0.0014366223,-2.7523347e-05,demographics,0.00080010784
+bullpen,delta_w_zCT,98,0.0013528231,-0.00064483227,personal delta,0.00075343694
+bullpen,w_xSP,99,0.0009809334,-0.00056189625,absolute Statcast,0.0005463179
+bullpen,past_elbow_IL_count,100,0.00086447154,-0.00019827593,injury history,0.000481456
+bullpen,w_zSP,101,0.0006575146,-0.00041647826,absolute Statcast,0.0003661941
+bullpen,delta_w_zSP,102,0.00062395394,-0.0003917634,personal delta,0.0003475029
+bullpen,delta_w_vSP,103,0.00041497074,-0.00017849934,personal delta,0.00023111247
+bullpen,delta_w_spinSP,104,0.00037248572,-0.00026242054,personal delta,0.000207451
+bullpen,complete_games_window,105,0.0,0.0,workload,0.0
+starter,delta_w_extCH,1,0.07245657,-0.06458054,personal delta,0.1254856
+starter,delta_w_vSI,2,0.06453498,-0.015632618,personal delta,0.111766405
+starter,n_pitches_window,3,0.032649934,0.0033823913,workload,0.05654555
+starter,w_ext_all,4,0.02729511,-0.0067427107,absolute Statcast,0.047271673
+starter,past_IL_count,5,0.025493912,-0.021254383,injury history,0.044152226
+starter,age,6,0.022649482,-0.0056631295,demographics,0.039226033
+starter,delta_w_pct_CT,7,0.017700493,-0.00859073,personal delta,0.030655012
+starter,delta_w_ext_all,8,0.01712943,-0.015480475,personal delta,0.029666003
+starter,w_zSI,9,0.015523474,-5.8225567e-05,absolute Statcast,0.02688469
+starter,delta_w_vFB,10,0.015002038,0.0019935581,personal delta,0.02598163
+starter,w_spinCB,11,0.010685979,-0.0038324685,absolute Statcast,0.018506762
+starter,w_xSL,12,0.010087315,-0.006988284,absolute Statcast,0.017469952
+starter,delta_w_spinSL,13,0.009437268,-0.008024127,personal delta,0.016344152
+starter,w_v_all,14,0.009208767,-0.0065822885,absolute Statcast,0.015948417
+starter,delta_w_zSI,15,0.008499073,-0.005331104,personal delta,0.014719318
+starter,w_z_all,16,0.007348214,-0.0028289568,absolute Statcast,0.012726176
+starter,delta_w_zFB,17,0.0066137565,-0.0028850029,personal delta,0.011454188
+starter,delta_w_xCT,18,0.00629253,-0.003292532,personal delta,0.010897865
+starter,w_xSP,19,0.0062457714,0.0012796735,absolute Statcast,0.010816885
+starter,w_spinFB,20,0.006128116,-0.004203713,absolute Statcast,0.01061312
+starter,w_zCB,21,0.0060184416,-0.0037200383,absolute Statcast,0.010423179
+starter,delta_w_vCB,22,0.0057676956,-0.0046330215,personal delta,0.009988918
+starter,w_xFB,23,0.005698746,-0.004312793,absolute Statcast,0.009869507
+starter,delta_w_xCB,24,0.0055036466,-0.001773467,personal delta,0.009531618
+starter,w_spinSP,25,0.0054686256,0.0014763336,absolute Statcast,0.009470967
+starter,w_pct_SP,26,0.0053684716,-0.0043245433,absolute Statcast,0.0092975125
+starter,delta_w_pct_SI,27,0.005099935,-0.00447769,personal delta,0.008832442
+starter,w_zCH,28,0.0050946833,0.0020667277,absolute Statcast,0.008823346
+starter,past_365d_IL_days,29,0.0048862514,-0.0012313513,injury history,0.0084623685
+starter,w_pct_FB,30,0.004860728,-0.0010515217,absolute Statcast,0.008418165
+starter,w_spinSI,31,0.004847414,-0.0029182332,absolute Statcast,0.0083951065
+starter,delta_w_v_all,32,0.0047905976,-0.00063075207,personal delta,0.008296708
+starter,w_spinSL,33,0.004392855,-0.0025011757,absolute Statcast,0.007607868
+starter,delta_w_spin_all,34,0.0043288535,-0.0035528499,personal delta,0.0074970257
+starter,w_vFB,35,0.004047684,-0.0037662862,absolute Statcast,0.0070100757
+starter,w_spinCH,36,0.004027238,-0.0024740787,absolute Statcast,0.006974666
+starter,w_xCB,37,0.0039598676,-0.0025979755,absolute Statcast,0.006857989
+starter,delta_w_z_all,38,0.003944424,-0.0016209458,personal delta,0.0068312427
+starter,delta_w_spinSI,39,0.0038826633,-0.0022668594,personal delta,0.006724281
+starter,w_zSP,40,0.0037891925,-0.0030566659,absolute Statcast,0.0065624015
+starter,delta_w_x_all,41,0.003772031,-0.002166281,personal delta,0.00653268
+starter,runner_gap_extension,42,0.003651799,-0.0031470477,runner-context gap,0.0063244533
+starter,delta_w_extSL,43,0.0034968792,0.002449912,personal delta,0.006056152
+starter,delta_w_extSP,44,0.0034817483,0.0010273608,personal delta,0.0060299467
+starter,w_spinCT,45,0.0033326847,-0.0009730367,absolute Statcast,0.005771788
+starter,weight_lb,46,0.0033056503,-0.0010277282,demographics,0.0057249675
+starter,delta_w_spinCB,47,0.0032504715,-0.0024964986,personal delta,0.005629405
+starter,days_since_last_IL,48,0.0032494583,-0.0020874639,injury history,0.00562765
+starter,delta_w_vCH,49,0.0030849522,-0.0028856918,personal delta,0.0053427466
+starter,delta_w_xSL,50,0.0030202821,-0.0020627328,personal delta,0.0052307458
+starter,w_vSL,51,0.0028986197,-0.0020356553,absolute Statcast,0.005020042
+starter,runner_gap_spin,52,0.0028852674,0.00029578558,runner-context gap,0.0049969177
+starter,delta_w_extSI,53,0.0027063661,-0.0017752878,personal delta,0.0046870834
+starter,delta_w_zSL,54,0.0026937998,-0.0021479537,personal delta,0.00466532
+starter,delta_w_extCT,55,0.0024923058,-0.00017440955,personal delta,0.004316358
+starter,runner_gap_pfx_x,56,0.0024782938,-0.0021847975,runner-context gap,0.004292091
+starter,w_pct_SI,57,0.0024703788,-0.00089688227,absolute Statcast,0.004278383
+starter,delta_w_zCH,58,0.00237614,0.0005925982,personal delta,0.0041151736
+starter,past_shoulder_IL_count,59,0.0023458537,0.00046257096,injury history,0.0040627215
+starter,w_vCT,60,0.0023063975,-0.0019279115,absolute Statcast,0.0039943885
+starter,w_vCB,61,0.002247142,-0.001745454,absolute Statcast,0.0038917651
+starter,w_spin_all,62,0.002161712,-0.0009199675,absolute Statcast,0.003743811
+starter,delta_w_spinCH,63,0.0021257584,-0.0007451468,personal delta,0.0036815442
+starter,delta_w_zCB,64,0.0019266594,-0.001761232,personal delta,0.00333673
+starter,w_pct_CH,65,0.0015118314,-0.001020876,absolute Statcast,0.0026183005
+starter,w_xCT,66,0.0014699906,-0.0011258988,absolute Statcast,0.0025458375
+starter,past_elbow_IL_count,67,0.0014527875,0.00039503092,injury history,0.0025160438
+starter,runner_gap_velocity,68,0.0013253564,-0.00044559714,runner-context gap,0.0022953495
+starter,w_vCH,69,0.001105946,2.9179853e-05,absolute Statcast,0.0019153584
+starter,days_since_prev_game,70,0.0010610602,-0.0005370424,workload,0.0018376219
+starter,w_x_all,71,0.0010382513,-0.00087554654,absolute Statcast,0.0017981197
+starter,delta_w_pct_SP,72,0.0010189667,0.00024541595,personal delta,0.0017647211
+starter,birth_country,73,0.0010166145,-0.00062431657,demographics,0.0017606475
+starter,height_inches,74,0.0008191408,-0.0004062959,demographics,0.001418648
+starter,w_zFB,75,0.0008183198,-0.0004932275,absolute Statcast,0.0014172262
+starter,delta_w_zCT,76,0.00079933385,-1.9296662e-05,personal delta,0.001384345
+starter,w_pct_CT,77,0.00077561825,-0.0004632999,absolute Statcast,0.0013432725
+starter,delta_w_vSL,78,0.0007506047,0.00043392702,personal delta,0.0012999523
+starter,delta_w_xFB,79,0.00074747036,3.35591e-05,personal delta,0.001294524
+starter,delta_w_pct_SL,80,0.00074365444,-6.139545e-05,personal delta,0.0012879153
+starter,delta_w_spinFB,81,0.00072134583,-0.00048049225,personal delta,0.0012492796
+starter,delta_w_xSI,82,0.0007148865,-0.0003747754,personal delta,0.0012380929
+starter,w_pct_CB,83,0.0006545729,-0.00034385134,absolute Statcast,0.0011336374
+starter,delta_w_pct_CH,84,0.00060777995,-0.00047678957,personal delta,0.0010525979
+starter,w_zSL,85,0.00051375333,-0.0001704957,absolute Statcast,0.00088975567
+starter,previous_arm_injury,86,0.00049865386,-0.00033252523,injury history,0.0008636053
+starter,w_pct_SL,87,0.0003939142,-0.00028036177,absolute Statcast,0.0006822095
+starter,delta_w_xSP,88,0.0003868922,-2.721065e-05,personal delta,0.0006700483
+starter,delta_w_extCB,89,0.00038514435,-0.00034876494,personal delta,0.0006670212
+starter,delta_w_xCH,90,0.0003501571,-0.00010686616,personal delta,0.0006064277
+starter,delta_w_pct_FB,91,0.00029722226,-0.00023562221,personal delta,0.0005147513
+starter,n_appearances_window,92,0.00029686937,-0.0002620433,workload,0.0005141401
+starter,delta_w_pct_CB,93,0.00028013275,-0.00023917816,personal delta,0.00048515442
+starter,w_vSP,94,0.00024426822,-0.00010455801,absolute Statcast,0.0004230416
+starter,delta_w_vCT,95,8.801428e-05,-7.940458e-05,personal delta,0.00015242958
+starter,delta_w_vSP,96,0.0,0.0,personal delta,0.0
+starter,delta_w_spinSP,97,0.0,0.0,personal delta,0.0
+starter,delta_w_spinCT,98,0.0,0.0,personal delta,0.0
+starter,complete_games_window,99,0.0,0.0,workload,0.0
+starter,runner_gap_pfx_z,100,0.0,0.0,runner-context gap,0.0
+starter,p_throws,101,0.0,0.0,demographics,0.0
+starter,delta_w_zSP,102,0.0,0.0,personal delta,0.0
+starter,w_zCT,103,0.0,0.0,absolute Statcast,0.0
