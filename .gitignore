@@ -9,3 +9,8 @@ __pycache__/
 # 가능하고 지금 안 쓰는 거라 git에는 올리지 않음.
 필요없는거/mlb_injury_project/data/
 필요없는거/mlb_injury_project/models/
+
+# 당장 필요한 파일/ 노트북을 실행할 때 생기는 로그/결과 산출물 - 코드가 아니라
+# 실행 결과물이라 git에는 안 올림 (노트북 다시 돌리면 재생성됨)
+당장 필요한 파일/*_run_log.txt
+당장 필요한 파일/*_results.json
