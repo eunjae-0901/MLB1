@@ -1,0 +1,11 @@
+role,variant,imbalance_method,resampling_scope,val_rows_unchanged,test_rows_unchanged,suspicious_f1_over_0_9,status
+bullpen,cc5,none,train_only,27714,28108,False,PASS
+bullpen,cc5,class_weight,train_only,27714,28108,False,PASS
+bullpen,cc5,smote,train_only,27714,28108,False,PASS
+bullpen,cc5,smotetomek,train_only,27714,28108,False,PASS
+bullpen,cc5,smoteenn,train_only,27714,28108,False,PASS
+starter,cc5,none,train_only,8418,8574,False,PASS
+starter,cc5,class_weight,train_only,8418,8574,False,PASS
+starter,cc5,smote,train_only,8418,8574,False,PASS
+starter,cc5,smotetomek,train_only,8418,8574,False,PASS
+starter,cc5,smoteenn,train_only,8418,8574,False,PASS
