@@ -9,6 +9,11 @@ __pycache__/
 **/scenarios/**/results/*predictions*.csv
 **/scenarios/**/data/
 
+# Kang 2025 reproduction intermediates and GPU checkpoints.
+베이스라인 파일/data/*.npz
+베이스라인 파일/results/checkpoints/
+베이스라인 파일/results/*predictions*.csv
+
 # 필요없는거/ 는 예전 파이프라인 전체를 "혹시 몰라서" 남겨둔 백업 폴더.
 # 스크립트(노트북)만 참고용으로 추적하고, 용량 큰 원본/중간 데이터(raw+interim+
 # export+processed 합쳐서 1GB+)와 예전 모델 산출물(.json/.pt/.xlsx)은 재생성

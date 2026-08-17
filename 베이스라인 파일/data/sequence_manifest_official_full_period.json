@@ -1,0 +1,20 @@
+{
+  "delta_mode": "official_full_period",
+  "shape": [
+    620,
+    224,
+    102
+  ],
+  "positive": 101,
+  "negative": 519,
+  "day_bins": [
+    100,
+    1215,
+    5
+  ],
+  "paper_expected_shape": [
+    620,
+    224,
+    102
+  ]
+}

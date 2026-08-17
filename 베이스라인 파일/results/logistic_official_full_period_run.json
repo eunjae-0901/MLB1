@@ -1,0 +1,21 @@
+{
+  "model": "logistic",
+  "delta_mode": "official_full_period",
+  "seeds": [
+    100,
+    200,
+    300,
+    400,
+    500,
+    600,
+    700,
+    800,
+    900,
+    1000
+  ],
+  "shape": [
+    620,
+    224,
+    102
+  ]
+}

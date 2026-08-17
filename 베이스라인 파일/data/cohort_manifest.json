@@ -1,0 +1,42 @@
+{
+  "years": [
+    2016,
+    2023
+  ],
+  "case_count": 101,
+  "control_count": 519,
+  "total": 620,
+  "paper_target": {
+    "case": 101,
+    "control": 519,
+    "total": 620
+  },
+  "season_composition": [
+    {
+      "target": 0,
+      "n_seasons": 3,
+      "n": 130
+    },
+    {
+      "target": 0,
+      "n_seasons": 4,
+      "n": 389
+    },
+    {
+      "target": 1,
+      "n_seasons": 2,
+      "n": 4
+    },
+    {
+      "target": 1,
+      "n_seasons": 3,
+      "n": 49
+    },
+    {
+      "target": 1,
+      "n_seasons": 4,
+      "n": 48
+    }
+  ],
+  "tjs_source": "C:\\Users\\ai_sy\\AppData\\Local\\Temp\\tjs_prediction_reference\\Raw_data\\list of TJ.csv"
+}
